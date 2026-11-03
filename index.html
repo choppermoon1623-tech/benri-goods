@@ -29,6 +29,8 @@
   .steps .start{background:none; border:none; font-weight:800; padding:4px 0}
   .quick{font:inherit; font-size:13px; font-weight:700; background:#fff; border:2px solid var(--accent); color:var(--accent-dk); border-radius:999px; padding:4px 14px; cursor:pointer; text-decoration:none}
   .quick:hover{background:var(--accent); color:#fff}
+  .quick.cad{margin-left:auto; border-color:#0f9a8a; color:#0b6f63}
+  .quick.cad:hover{background:#0f9a8a; color:#fff}
   .grp .row{display:flex; gap:10px; align-items:center}
   .grp .row input[type=range]{flex:1}
   .grp input[type=number]{width:74px; font:inherit; font-size:14px; padding:4px 6px; border:2px solid var(--line); border-radius:8px; text-align:right}
@@ -139,10 +141,12 @@
 </header>
 <div class="steps">
   <span class="start">はじめての方は →</span>
-  <button class="quick" data-go="card">🪧 まず1つ：カード・席札スタンド</button>
+  <button class="quick" data-go="keytag">🔑 まず1つ：名前キーホルダー</button>
+  <button class="quick" data-go="card">🪧 カード・席札スタンド</button>
   <button class="quick" data-go="namemag">🧲 名簿から作る：ネームマグネット</button>
   <button class="quick" data-go="volume">🧪 授業で使う：体積くらべ</button>
   <a class="quick" href="#guide">📘 研修の進め方</a>
+  <a class="quick cad" href="https://choppermoon1623-tech.github.io/monozukuri-koubou/gadget-cad.html" target="_blank" rel="noopener" title="形を重ねたりくり抜いたりして、ゼロから自由に設計できる3D CAD（別のタブで開きます）">🧊 もっと自由に：3D CAD で設計 ↗</a>
 </div>
 <div class="steps sub">
   <span><b>①</b> 一覧からグッズを選ぶ（分類タブ・さがす で しぼれます）</span>
@@ -285,6 +289,24 @@ const CATALOG = [
     need: "とくになし",
     print: ["プレート1＝文字の板、プレート2＝台。それぞれ「STLを保存」して別々に印刷（どちらもサポートなし）", "文字の色を変えるのはプレート1だけ：{colorZ}mm でフィラメント変更（文字の板は平らなので、文字だけが別の色になります）"],
     use: ["文字の板を、台の斜面の段に下から差しこむようにのせる", "研修で配るなら、事前に名簿から刷っておき、当日は1つだけ実演で刷ると時間が読めます"],
+  },
+  {
+    id: "keytag", cat: "benri", icon: "🔑", name: "名前キーホルダー", scene: "研修・学級",
+    catch: "名前や学級名を入れるだけ。小さくて早く刷れるので、はじめての1つや研修の記念に",
+    popular: { text: "名前入りのキーホルダーは MakerWorld・Printables で作品の多い定番。文字を入れるだけで自分のものになり、印刷も短時間で済みます。", url: "https://makerworld.com/en/search/models?keyword=name%20keychain" },
+    measure: "つけたいもの（かぎ・ペンケース・名札ケース）の大きさを見て、文字の大きさを決めます。",
+    params: [
+      { k: "text", label: "文字", type: "textarea", def: "なまえ", hint: "1〜2行。長いほど横に長くなります（URLコピーには入りません）", private: true },
+      { k: "textH", label: "文字の大きさ（上限）", type: "range", min: 8, max: 24, step: 1, def: 14, unit: "mm" },
+      { k: "shape", label: "ベースの形", type: "select", def: "rect", opts: [["rect", "角丸の板"], ["outline", "文字にそう形"]] },
+      { k: "textT", label: "文字の盛り上がり", type: "range", min: 0.6, max: 2.4, step: 0.2, def: 1, unit: "mm" },
+      { k: "baseT", label: "ベースの厚み", type: "range", min: 2, max: 5, step: 0.2, def: 3, unit: "mm" },
+      { k: "bold", label: "文字を太らせる", type: "range", min: 0, max: 0.6, step: 0.1, def: 0.2, unit: "mm", hint: "画数の多い漢字は 0.3mm 以上に" },
+      { k: "holeD", label: "キーリングの穴", type: "range", min: 3, max: 8, step: 0.5, def: 5, unit: "mm" },
+    ],
+    need: "キーリング（金具）",
+    print: ["サポート：なし（文字を上にした、このままの向き）", "文字の色を変える：Bambu Studio でスライス後、右のレイヤーバーを {colorZ}mm に合わせて「＋」→「フィラメント変更」"],
+    use: ["穴にキーリングを通す。穴のまわりは3mm以上の厚みを残しています", "細い線は0.8mm未満だと刷れません。かすれる時は「文字を太らせる」を上げます"],
   },
   {
     id: "bagclip", cat: "benri", icon: "🥨", name: "袋クリップ", scene: "職員室",
@@ -1931,6 +1953,31 @@ function makeGeom(M){
       note: "帯の長さ 約" + Math.round(len / 10) + "cm" } };
   };
 
+  // 名前キーホルダー：ベースの板に文字を盛り上げ、左はしにキーリングの穴。ベースは「角丸の板」か「文字にそう形」
+  B.keytag = p => {
+    const pad = 3, ringR = p.holeD / 2 + 3;
+    const t = fitText(p.bitmap, PLATE - 2 * ringR - 2 * pad - 4, p.textH, p.bold);
+    if (!t) return { parts: [], info: { note: "文字を入れてください" } };
+    const tx = 2 * ringR + pad - 1 + t.w / 2;                // 文字の中心（穴の右どなり）
+    const text = T(t.cs.translate([tx, 0]));
+    const W = 2 * ringR + pad - 1 + t.w + pad, H = Math.max(t.h + 2 * pad, 2 * ringR);
+    let plate;
+    if (p.shape === "outline"){
+      const tab = 2 * ringR + pad + 4;
+      plate = U2([off(text, 2.4), circle(ringR, ringR, 0), rrect(tab, Math.min(6, H), 2, tab / 2, 0)]);
+      // 文字どうしが離れている時は、細い背骨でつないで1つの部品にする
+      if (plate.decompose().length > 1) plate = U2([plate, rrect(W - ringR - 2, Math.max(4, Math.min(6, t.h * 0.4)), 2, ringR + (W - ringR - 2) / 2, 0)]);
+    } else {
+      plate = rrect(W, H, Math.min(4, H / 2 - 0.5), W / 2, 0);
+    }
+    plate = D2(plate, circle(p.holeD / 2, ringR, 0, 48));
+    const base = ext(plate, p.baseT);
+    const raised = ext(text, p.textT + 0.01, p.baseT - 0.01);
+    const m = U([base, raised]);
+    const bb = bbox(m);
+    return { parts: [m], info: { colorZ: p.baseT, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], p.baseT + p.textT] } };
+  };
+
   function build(kind, p){
     free();
     if (!B[kind]) throw new Error("unknown " + kind);
@@ -2155,6 +2202,7 @@ function params(){
     p.bitmaps = String(p.names).split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, 40).map(rasterText).filter(Boolean);
   }
   if (g.id === "nameplate") p.bitmap = rasterText(p.text || "なまえ");
+  if (g.id === "keytag") p.bitmap = rasterText(p.text || "なまえ");
   if (g.id === "stamp"){ p.bitmap = rasterText(p.text || "見", true); p.lines = Math.min(2, String(p.text).split(/\r?\n/).filter(s => s.trim()).length || 1); }
   if (g.id === "stone") p.bitmap = String(p.text || "").trim() ? rasterText(p.text, true) : null;
   if (g.id === "flexname") p.labels = [...String(p.text || "")].filter(c => c.trim()).slice(0, 10).map(c => rasterText(c));
