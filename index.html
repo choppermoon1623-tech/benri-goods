@@ -197,6 +197,7 @@
     <ul>
       <li>研修中に完成まで見せるのは、事前に Bambu Studio でスライスして時間を確かめた1点だけにすると安心です（小さいもの：鉛筆グリップ・カードスタンド・点字プレートなど）。プリンタが1台なら、<b>全員のゴール＝寸法を決めてSTLを保存し、Bambu Studio でスライスするまで</b>、代表の1点だけを実際に印刷して見せます。</li>
       <li>フィジェット（なでなで石・触感タイル・迷路）としくみフィジェット（遊星ギヤ・歯車の列・名前いもむし・らせんくぐり・びよーんスパイラル・パチパチスイッチ）は、「授業中に一人で使う」「活動として使う」「休み時間に使う」を分けて考えます。使う場面・置き場所・回収のしかたを決め、学習のじゃまになるなら見直す。待ち時間の5分で話し合うのもおすすめです。</li>
+      <li>プリンタが会場にない時は、<b>全員のゴール＝寸法を決めてSTLを保存し、Padletなどに提出するまで</b>（選ぶ・測る・保存で15〜20分が目安）。印刷は講師が後日まとめて行います。プレートが2枚以上あるグッズは全部を提出してもらいます。</li>
       <li>子どもに「これ、先生が寸法を決めて作ったんだよ」と言えるのがねらいです。人気作をそのまま落とすのではなく、自分の教室に合わせて数値を決めるところに価値があります。</li>
       <li>ネームマグネットの名簿は、この画面の中だけで処理されます（サーバーに送られません）。URLコピーにも名簿は入りません。</li>
     </ul>
@@ -301,12 +302,12 @@ const CATALOG = [
       { k: "shape", label: "ベースの形", type: "select", def: "rect", opts: [["rect", "角丸の板"], ["outline", "文字にそう形"]] },
       { k: "textT", label: "文字の盛り上がり", type: "range", min: 0.6, max: 2.4, step: 0.2, def: 1, unit: "mm" },
       { k: "baseT", label: "ベースの厚み", type: "range", min: 2, max: 5, step: 0.2, def: 3, unit: "mm" },
-      { k: "bold", label: "文字を太らせる", type: "range", min: 0, max: 0.6, step: 0.1, def: 0.2, unit: "mm", hint: "画数の多い漢字は 0.3mm 以上に" },
+      { k: "bold", label: "文字を太らせる", type: "range", min: 0, max: 0.6, step: 0.1, def: 0.2, unit: "mm", hint: "画数の多い漢字は、まず文字を大きく。かすれる時だけ 0.1mm ずつ上げる" },
       { k: "holeD", label: "キーリングの穴", type: "range", min: 3, max: 8, step: 0.5, def: 5, unit: "mm" },
     ],
     need: "キーリング（金具）",
     print: ["サポート：なし（文字を上にした、このままの向き）", "文字の色を変える：Bambu Studio でスライス後、右のレイヤーバーを {colorZ}mm に合わせて「＋」→「フィラメント変更」"],
-    use: ["穴にキーリングを通す。穴のまわりは3mm以上の厚みを残しています", "細い線は0.8mm未満だと刷れません。かすれる時は「文字を太らせる」を上げます"],
+    use: ["穴にキーリングを通す。穴のまわりは平面で3mmの幅を残しています", "細い線は0.8mm以上が目安。細い部分は Bambu Studio のスライス結果（プレビュー）で確かめます"],
   },
   {
     id: "bagclip", cat: "benri", icon: "🥨", name: "袋クリップ", scene: "職員室",
@@ -434,7 +435,7 @@ const CATALOG = [
       { k: "h", label: "高さ（内側）", type: "range", min: 30, max: 80, step: 1, def: 50, unit: "mm" },
     ],
     need: "砂・米・ビーズなど（水は継ぎ目からしみることがあります）",
-    print: ["錐は口を下にした向き（とがった方が上）で、サポートなしで印刷", "口のつばがベッドへの接地になり、使う時は注ぐ持ち手になります", "内側の寸法をそろえてあるので、柱と錐は同じ設定で刷ってください"],
+    print: ["錐は口を下にした向き（とがった方が上）で、サポートなしで印刷。低く太い錐は内面が荒れやすいので、画面に注意が出たら高さを上げます", "口のつばがベッドへの接地になり、使う時は注ぐ持ち手になります", "内側の寸法をそろえてあるので、柱と錐は同じ設定で刷ってください"],
     use: ["錐は受け台に先を下にして立て、すり切り一杯にして柱へ移す", "柱が何杯でいっぱいになるか予想させてから試す"],
   },
   {
@@ -1287,7 +1288,7 @@ function makeGeom(M){
     const r = p.r, h = p.h, w = 1.6, items = [];
     const al = Math.atan(r / h);
     const kinds = p.set === "both" ? ["round", "square"] : [p.set];
-    const notes = [];
+    const notes = [], warn = [];
     for (const k of kinds){
       const sq = k === "square", seg = sq ? 4 : 72, cr = sq ? Math.SQRT2 : 1;     // 正方形は外接円の半径で作る
       const rot = m => sq ? T(m.rotate([0, 0, 45])) : m;
@@ -1306,10 +1307,13 @@ function makeGeom(M){
       const stand = sub(U([cyl(ht, rs + 2.4, 0, 0, 0, 64), cyl(2, Math.max(rs + 10, roC * 0.75), 0, 0, 0, 64)]), U([cyl(ht + 2, rs, 0, 0, 2, 64), cyl(4, Math.max(1, rs - 1.5), 0, 0, -1, 32)]));
       items.push(prism, cone, stand);
       const base = sq ? 4 * r * r : Math.PI * r * r;
+      // 錐の内面の傾き（垂直から）。40°をこえると内面が荒れやすい
+      const ang = Math.atan(r * (sq ? Math.SQRT2 : 1) / h) * 180 / Math.PI;
+      if (ang > 40) warn.push((sq ? "四角錐" : "円錐") + "の内面が垂直から約" + Math.round(ang) + "°。荒れやすいので高さ" + Math.ceil(r * (sq ? Math.SQRT2 : 1) / Math.tan(40 * Math.PI / 180)) + "mm以上が安心");
       notes.push((sq ? "四角柱 " : "円柱 ") + Math.round(base * h / 1000) + "mL ／ " + (sq ? "四角錐 " : "円錐 ") + Math.round(base * h / 3000) + "mL");
     }
     const plates = packPlates(items, 5);
-    return { plates, info: { size: platesInfo(plates), note: "", vol: notes.join("、") } };
+    return { plates, info: { size: platesInfo(plates), note: warn.join("／"), vol: notes.join("、") } };
   };
 
   // ⑭ 分数円（ピースどうしは 0.5mm すき間。分数の文字は色替えできる高さに）
@@ -1961,12 +1965,14 @@ function makeGeom(M){
     const tx = 2 * ringR + pad - 1 + t.w / 2;                // 文字の中心（穴の右どなり）
     const text = T(t.cs.translate([tx, 0]));
     const W = 2 * ringR + pad - 1 + t.w + pad, H = Math.max(t.h + 2 * pad, 2 * ringR);
-    let plate;
+    let plate, fallback = false;
     if (p.shape === "outline"){
       const tab = 2 * ringR + pad + 4;
       plate = U2([off(text, 2.4), circle(ringR, ringR, 0), rrect(tab, Math.min(6, H), 2, tab / 2, 0)]);
       // 文字どうしが離れている時は、細い背骨でつないで1つの部品にする
       if (plate.decompose().length > 1) plate = U2([plate, rrect(W - ringR - 2, Math.max(4, Math.min(6, t.h * 0.4)), 2, ringR + (W - ringR - 2) / 2, 0)]);
+      // それでも離れた部分が残る（2行・離れた記号など）時は、角丸の板に切りかえて1つの部品にする
+      if (plate.decompose().length > 1){ plate = rrect(W, H, Math.min(4, H / 2 - 0.5), W / 2, 0); fallback = true; }
     } else {
       plate = rrect(W, H, Math.min(4, H / 2 - 0.5), W / 2, 0);
     }
@@ -1975,7 +1981,8 @@ function makeGeom(M){
     const raised = ext(text, p.textT + 0.01, p.baseT - 0.01);
     const m = U([base, raised]);
     const bb = bbox(m);
-    return { parts: [m], info: { colorZ: p.baseT, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], p.baseT + p.textT] } };
+    return { parts: [m], info: { colorZ: p.baseT, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], p.baseT + p.textT],
+      note: fallback ? "文字が離れていて1つにつながらないため、角丸の板にしました" : "" } };
   };
 
   function build(kind, p){
@@ -2329,7 +2336,9 @@ function download(){
   a.download = fileName();
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  toast("ダウンロードフォルダに保存しました。Bambu Studio にドラッグしてください");
+  const nP = last.plates.length;
+  toast(nP > 1 ? `プレート${state.plate + 1}／${nP}を保存しました。全${nP}枚を保存してください（提出するときは全部添付）`
+               : "ダウンロードフォルダに保存しました。印刷は Bambu Studio にドラッグ、提出はこのファイルを添付");
 }
 function fileName(){
   const g = byId[state.goods], v = state.vals[g.id];
@@ -2365,7 +2374,7 @@ $("shareBtn").onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); toast("URLをコピーしました（名簿は含まれません）"); }
   catch (e){ prompt("このURLをコピーしてください", location.href); }
 };
-function toast(msg){ const t = $("toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 3200); }
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 5000); }
 
 function select(id){
   state.goods = id; state.plate = 0;
