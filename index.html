@@ -645,16 +645,16 @@ const CATALOG = [
     lesson: "技術の「機構」で、自動車の変速機やハイブリッド車の動力分割、電動ドライバーの減速に使われる遊星歯車を、手の中で確かめられます。「リングの歯の数＝太陽＋遊星×2」になっているか数えてみよう。リングを止めて太陽を回した時、目印の点がついた遊星が1周する間に太陽は何回？",
     measure: "手のひらに収まる外径と、プリンタの「すき間」の再現性（まず既定の 0.3mm）で決めます。",
     params: [
-      { k: "D", label: "外径", type: "range", min: 45, max: 80, step: 1, def: 58, unit: "mm" },
-      { k: "thick", label: "厚さ", type: "range", min: 8, max: 16, step: 0.5, def: 11, unit: "mm" },
-      { k: "sunT", label: "太陽（まん中）の歯の数", type: "range", min: 10, max: 20, step: 1, def: 14, unit: "枚" },
-      { k: "planetT", label: "遊星の歯の数", type: "range", min: 8, max: 14, step: 1, def: 10, unit: "枚" },
+      { k: "D", label: "外径", type: "range", min: 50, max: 80, step: 1, def: 64, unit: "mm" },
+      { k: "thick", label: "厚さ", type: "range", min: 9, max: 16, step: 0.5, def: 12, unit: "mm" },
+      { k: "sunT", label: "太陽（まん中）の歯の数", type: "range", min: 10, max: 20, step: 1, def: 10, unit: "枚" },
+      { k: "planetT", label: "遊星の歯の数", type: "range", min: 8, max: 14, step: 1, def: 8, unit: "枚", hint: "歯の数を増やすと歯が小さく細くなり、外れやすくなります" },
       { k: "count", label: "遊星の数（置けない時は自動で減らします）", type: "range", min: 3, max: 6, step: 1, def: 4, unit: "個" },
       { k: "clearance", label: "部品どうしのすき間", type: "range", min: 0.2, max: 0.45, step: 0.05, def: 0.3, unit: "mm", hint: "固まって回らない時は大きく、ガタつく時は小さく" },
     ],
     need: "とくになし",
     print: ["サポートなし・ブリムなし。0.2mm Standard でOK（1層目のはみ出し対策で、いちばん下だけ歯を細くしてあります）", "Bambu Studio の「象の足の補正（Elephant foot compensation）」は既定のままに", "刷り上がりは少し固いので、輪と太陽を持って、ゆっくり左右に何度か回して慣らします"],
-    use: ["外の輪を親指と人さし指ではさみ、まん中のくぼみを別の指で回す", "配る前に、何十回か回して固さ・ガタ・遊星が浮いてこないかを確かめる。山形の歯で上下に抜けにくい形ですが、プリンタやすき間で変わります", "回らない時は無理に力を入れない。固い時はすき間を 0.05mm 大きく、ガタつく時は小さくして作り直す", "口に入れる行動がある子には貸し出さない。白い筋・ひび・欠けが出たら使うのをやめ、破片を回収する"],
+    use: ["外の輪を親指と人さし指ではさみ、まん中のくぼみを別の指で回す", "配る前に、何十回か回して固さ・ガタ・遊星が浮いてこないかを確かめる。山形の歯で上下に抜けにくい形ですが、プリンタやすき間で変わります", "回らない時は無理に力を入れない。固い時はすき間を 0.05mm 大きく、ガタつく・遊星や太陽が抜ける時は 0.05mm 小さくして作り直す", "口に入れる行動がある子には貸し出さない。白い筋・ひび・欠けが出たら使うのをやめ、破片を回収する"],
   },
   {
     id: "geartrain", cat: "mech", icon: "⚙️", name: "まわしてギヤ（歯車の列）", scene: "技術・算数",
@@ -1756,8 +1756,8 @@ function makeGeom(M){
 
   // 遊星ギヤ・スピナー：外の輪を指ではさみ、まん中の太陽を親指で回す。ヘリンボーン歯で上下に抜けない、組み立て不要のプリントインプレース
   B.planet = p => {
-    const zs = Math.round(p.sunT), zp = Math.round(p.planetT), cl = p.clearance, rim = 4;
-    const zr = zs + 2 * zp, alpha = 25 * Math.PI / 180;
+        const zs = Math.round(p.sunT), zp = Math.round(p.planetT), cl = p.clearance, rim = Math.min(7, Math.max(5, p.D * 0.08));
+    const zr = zs + 2 * zp, alpha = (p._alpha || 20) * Math.PI / 180;   // 圧力角20°：歯先が太く刷りやすく、外へ押し出す力も小さい
     const m = (p.D / 2 - rim) / (zr / 2 + 1.25);          // 外径から歯の大きさ（モジュール）を決める
     const rps = m * zs / 2, rpp = m * zp / 2, rpr = m * zr / 2, c = rps + rpp;
     // 遊星の数：等間隔に置けて（(太陽+リング) が数で割り切れる）、となりどうしがぶつからない最大
@@ -1766,10 +1766,18 @@ function makeGeom(M){
     while (Np > 2 && !ok(Np)) Np--;
     if (!ok(Np)) Np = 2;
     const planetCS = rackGear(m, zp, alpha, 0, { ded: 1.25 * m });
-    const sunCS = envelopeGear(planetCS, rpp, zp, rps, zs, false, cl, circle(rps + m, 0, 0, 128), m);
+    // すき間 cl は、遊星を35%・太陽とリングを65%の割合で分け合う（全部を太陽側に回すと太陽の歯先が 0.2mm 以下になり、刷れずにかみ合いが浅くなって抜ける）
+    const sh = p._share != null ? p._share : 0.35, clP = cl * sh, clO = cl - clP;   // 遊星の取り分 35%
+    const planetPrint = T(off(planetCS, -clP).simplify(0.008));   // 細らせると頂点が増えて計算が重くなるので間引く
+    const sunCS = envelopeGear(planetCS, rpp, zp, rps, zs, false, clO, circle(rps + m, 0, 0, 128), m);
     const Rout = rpr + 1.25 * m + rim;
-    const ringCS = envelopeGear(planetCS, rpp, zp, rpr, zr, true, cl, D2(circle(Rout, 0, 0, 160), circle(rpr - m, 0, 0, 160)), m);
-    const h = p.thick, beta = 30 * Math.PI / 180;
+    if (p._cs){ const rc = envelopeGear(planetCS, rpp, zp, rpr, zr, true, clO, D2(circle(Rout, 0, 0, 160), circle(rpr - m, 0, 0, 160)), m); return { cs: { planetCS: planetPrint, sunCS, ringCS: rc, m, rps, rpp, rpr, zs, zp, zr } }; }   // 解析用
+    const ringCS = envelopeGear(planetCS, rpp, zp, rpr, zr, true, clO, D2(circle(Rout, 0, 0, 160), circle(rpr - m, 0, 0, 160)), m);
+    // 歯先の幅（先から0.4mmの帯の平均）。0.6mm より細いと 0.4mm ノズルで刷れず、かみ合いが浅くなる
+    const tipW = (cs, r0, r1, z) => cs.intersect(D2(circle(r1, 0, 0, 256), circle(r0, 0, 0, 256))).area() / (z * (r1 - r0));
+    const tips = [tipW(sunCS, rps + m - 0.4, rps + m, zs), tipW(planetPrint, rpp + m - 0.4, rpp + m, zp)];
+    const thinTip = Math.min(...tips);
+    const h = p.thick, beta = (p._beta || 35) * Math.PI / 180;   // ねじれ角35°：軸方向に押された時に遊星を外へ押す力が小さく、歯先の傾きも45°以内
     const A = (h / 2) * Math.tan(beta);                    // ピッチ円上でのねじれ量（半分の高さで）
     const herring = (cs, tw) => {
       let lo = extT(cs, h / 2, 0, 12, deg(tw));
@@ -1786,20 +1794,20 @@ function makeGeom(M){
     let ring = herring(ringCS, -A / rpr);
     // 外周のすべり止め（指がかりの浅いみぞ）と、回転を数える目印
     const knurl = [];
-    for (let i = 0; i < 30; i++){ const a = 2 * Math.PI * i / 30; knurl.push(cyl(h + 2, 1.1, Rout * Math.cos(a), Rout * Math.sin(a), -1, 16)); }
+    for (let i = 0; i < 30; i++){ const a = 2 * Math.PI * i / 30; knurl.push(cyl(h + 2, 1.1, (Rout + 0.5) * Math.cos(a), (Rout + 0.5) * Math.sin(a), -1, 16)); }   // 深さ0.6mm（リングを薄くしない）
     ring = sub(ring, U(knurl));
     ring = sub(ring, cyl(1, 1.3, Rout - 2.4, 0, h - 0.6, 20));
     const parts = [sun, ring];
     for (let k = 0; k < Np; k++){
       const psi = 2 * Math.PI * k / Np;
       const spin = psi * (zs + zp) / zp;                  // 平行移動で置くので、公転角ψ＋自転ψ·zs/zp の向き
-      let pl = herring(rot2(planetCS, spin), -A / rpp);
+      let pl = herring(rot2(planetPrint, spin), -A / rpp);
       if (k === 0) pl = sub(pl, cyl(1, 1.1, 0, 0, h - 0.6, 20));     // 1つだけ目印の点（回り方を目で追える）
       parts.push(mv(pl, c * Math.cos(psi), c * Math.sin(psi), 0));
     }
     const carrier = zs / (zs + zr);
     return { parts, info: { multiBody: true, size: [2 * Rout, 2 * Rout, h], Np, zr, zs, zp, c, mod: +m.toFixed(2),
-      note: "遊星 " + Np + " 個・リングの歯 " + zr + " 枚（= 太陽 " + zs + " ＋ 遊星 " + zp + "×2）。リングを止めて太陽を1回まわすと、遊星の列は " + carrier.toFixed(2) + " 回（" + zs + "/" + (zs + zr) + "）まわります" } };
+      note: (thinTip < 0.6 ? "⚠ 歯先が細い（約" + thinTip.toFixed(1) + "mm）ので刷れずに外れやすくなります。歯の数を減らすか、外径を大きくしてください。" : "") + "遊星 " + Np + " 個・リングの歯 " + zr + " 枚（= 太陽 " + zs + " ＋ 遊星 " + zp + "×2）。リングを止めて太陽を1回まわすと、遊星の列は " + carrier.toFixed(2) + " 回（" + zs + "/" + (zs + zr) + "）まわります" } };
   };
 
   // まわしてギヤ（歯車の列）：枠の中で2〜3枚の歯車がかみ合って回る。軸は「つづみ形」で歯車が抜けない、組み立て不要のプリントインプレース
