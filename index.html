@@ -1425,7 +1425,7 @@ function makeGeom(M){
     const body = T(U([hex(hexR - 1.2, 0, 0.01), hex(hexR, 1.2, L - 2.4), hex(hexR - 1.2, L - 0.01, 0.01)]).hull());
     const lip = (p.d - p.grip) / 2;                           // つめの先はチョークより grip だけ細い → 押しこむと広がってつかむ
     const bore = U([
-      cyl(L - 3.2 + 0.01, r, 0, 0, -1, 48),
+      cyl(L - 3.2 + 1 + 0.01, r, 0, 0, -1, 48),   // z=-1 から始めるので +1（これがないと つめの根元に厚さ1mmのふたが残る）
       T(T(Manifold.cylinder(r - lip, r, lip, 48)).translate([0, 0, L - 3.2])),
       cyl(3.4, lip, 0, 0, L - 3.2 + (r - lip) - 0.01, 48),
       T(T(Manifold.cylinder(0.8, lip, lip + 0.8, 48)).translate([0, 0, L - 0.79])),   // 入口の面取り
