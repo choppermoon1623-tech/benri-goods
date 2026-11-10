@@ -253,7 +253,7 @@ const CATALOG = [
     ],
     need: "とくになし",
     print: ["この向きのままサポートなしで印刷できます", "タブレット用はインフィル 20% にすると安心"],
-    use: ["端末を手前の段に乗せ、背もたれに立てかける", "ぐらつく時は角度を小さく（寝かせる）するか、幅を広げて作り直す"],
+    use: ["端末を手前の段に乗せ、背もたれに立てかける", "底面は、端末の重心が中に入るよう角度に合わせて後ろへ伸びます（寝かせるほど長くなる）", "後ろへ倒れそうな時は角度を大きく（立てる）、左右にぐらつく時は幅を広げて作り直す"],
   },
   {
     id: "namemag", cat: "benri", icon: "🧲", name: "黒板用ネームマグネット", scene: "教室",
@@ -420,8 +420,8 @@ const CATALOG = [
       { k: "grip", label: "つめの締めぐあい", type: "range", min: 0.2, max: 0.8, step: 0.1, def: 0.4, unit: "mm", hint: "つめの先がチョークより何mm細いか。ゆるい→大きく、チョークが割れる→小さく" },
     ],
     need: "とくになし",
-    print: ["立てた向きのまま、サポートなしで印刷", "つめがしなるよう、壁は 2〜3周（初期値のまま）でOK"],
-    use: ["先のつめにチョークを押しこむとつかみます", "短くなったら、後ろの穴から鉛筆で押し出す"],
+    print: ["立てた向きのまま、サポートなしで印刷", "細長くて接地が小さいので、Bambu Studio で「ブリム」をオン（外側・幅 5mm）にする。ベッドが前後に動く A1 mini では、ブリムなしだと途中で倒れることがあります", "つめがしなるよう、壁は 2〜3周（初期値のまま）でOK"],
+    use: ["ブリムは手でちぎり、残りをカッターか紙やすりで落とす", "先のつめにチョークを押しこむとつかみます", "短くなったら、後ろの穴から鉛筆で押し出す"],
   },
   {
     id: "volume", cat: "kyozai", icon: "🧪", name: "体積くらべ（柱と錐）", scene: "算数・数学",
@@ -465,13 +465,16 @@ const CATALOG = [
       { k: "D", label: "文字盤の直径", type: "range", min: 90, max: 170, step: 1, def: 140, unit: "mm" },
       { k: "minNums", label: "外側に分の数字（5・10・15…）", type: "check", def: true },
       { k: "textT", label: "数字の盛り上がり", type: "range", min: 0.6, max: 1.4, step: 0.2, def: 1, unit: "mm" },
+      { k: "magnet", label: "裏に磁石の穴をあける（黒板に貼る）", type: "check", def: false },
+      { k: "magD", label: "磁石の直径", type: "range", min: 6, max: 15, step: 0.5, def: 10, unit: "mm", show: "magnet" },
+      { k: "magT", label: "磁石の厚さ", type: "range", min: 1, max: 3, step: 0.5, def: 2, unit: "mm", show: "magnet" },
       { k: "trial", label: "まず軸穴の試験片を作る（穴4種＋ピン）", type: "check", def: false },
       { k: "pinFit", label: "文字盤の軸穴（ピンは⌀5.0）", type: "select", def: "4.9", opts: [["4.8", "⌀4.8（きつい）"], ["4.9", "⌀4.9（ふつう）"], ["5", "⌀5.0（ゆるめ）"], ["5.1", "⌀5.1（接着する時）"]], hint: "ピンが入らない時はひとつゆるく。抜ける時はひとつきつく" },
     ],
     colorText: true,
-    need: "とくになし",
+    need: "{need}",
     print: ["サポートなし。数字と目盛りの色を変えるなら {colorZ}mm でフィラメント変更", "針を別の色にするなら、Bambu Studio で「オブジェクトに分割」してから針だけ色を割り当て"],
-    use: ["文字盤の穴に、短針→長針の順に重ね、上から軸ピンを押しこむ（文字盤側はきつめ、針はくるくる回る）", "長針と短針は連動しません。「長針を1周させると短針はどこまで進む？」と考えさせる使い方に"],
+    use: ["文字盤の穴に、短針→長針の順に重ね、上から軸ピンを押しこむ（文字盤側はきつめ）", "ピンを浅く止めると針はくるくる回り、深く押しこむとピンの頭が針をはさんで、止めた所で止まります。立てて見せる・黒板に貼る時は、針が下がらない固さまで押しこむ（いちばん深く押すと、ピンの先が裏に約0.3mm出ます）", "磁石の穴をあけた時は、裏の4つの穴に接着剤を1滴ずつ、磁石を入れる", "長針と短針は連動しません。「長針を1周させると短針はどこまで進む？」と考えさせる使い方に"],
   },
   {
     id: "tuberack", cat: "kyozai", icon: "🧫", name: "試験管立て", scene: "理科",
@@ -670,7 +673,7 @@ const CATALOG = [
       { k: "mod", label: "歯の大きさ（モジュール）", type: "select", def: "1.5", opts: [["1.25", "1.25（小さく）"], ["1.5", "1.5（ふつう）"], ["2", "2（大きく・回しやすい）"]] },
     ],
     need: "とくになし",
-    print: ["寝かせた向きのまま、サポートなしで印刷。軸をつるす上の橋は、ブリッジ（空中に渡す線）で刷れる長さにしてあります", "刷り上がったら、歯車を指でゆっくり回して、1層目のくっつきをはがします"],
+    print: ["寝かせた向きのまま、サポートなしで印刷。軸をつるす上の橋は、ブリッジ（空中に渡す線）で刷ります（いま いちばん長い所で 約{span}mm。歯車との間は 1mm あけてあります。40mm をこえると画面に注意が出ます）", "刷り上がったら、歯車を指でゆっくり回して、1層目のくっつきをはがします"],
     use: ["ふちの外から歯車の歯に指をかけて回す。歯車の点が、ふちの三角を何回通るか数える", "歯車Aを {ratio} 回まわすとCが1回（歯の数の比）", "固くて回らない時は、ぐっと力を入れず、左右に少しずつ動かして慣らす。上の橋が垂れて歯車にふれる時は、Bambu Studio でブリッジの設定を見直す", "口に入れる行動がある子には貸し出さない。白い筋・ひび・欠けが出たら使うのをやめ、破片を回収する"],
   },
   {
@@ -721,6 +724,183 @@ const CATALOG = [
     need: "とくになし",
     print: ["寝かせた向きのまま、サポートなし。1層目がきれいに付くよう、ベッドを洗っておく", "PLA でOK。PETG だと戻りがやわらかく、折れにくくなります"],
     use: ["外の輪を片手で持ち、まん中のつまみをゆっくり引き上げる", "はじめは数cmから。外の輪の直径（約{lift}cm）くらいは、刷ったもので試してから決める目安です（保証値ではありません）", "引きすぎると伸びたまま戻らなくなります。帯の太さ・厚さを変えて、戻り方を比べてみよう", "ねじったり、強く引っぱったりしない。口に入れる行動がある子には貸し出さない。白い筋・ひび・欠けが出たら使うのをやめ、破片を回収する"],
+  },
+  {
+    id: "numtag", cat: "benri", icon: "🔢", name: "番号札（まとめて作る）", scene: "教室・保管庫",
+    catch: "1〜40 などの番号札を一度に。タブレット保管庫・ロッカー・傘立て・充電ケーブルに",
+    popular: { text: "番号タグ・ケーブルタグは MakerWorld・Printables に作品の多い実用品。3Dプリントなら、学級の人数と付ける場所に合わせて、番号と大きさをそろえて作れます。", url: "https://makerworld.com/en/search/models?keyword=number%20tag" },
+    lesson: "出席番号の札をタブレットと充電ケーブルの両方に付けると、片づけの確認が番号だけでできます。",
+    measure: "付ける場所（保管庫の段・ロッカーの名札わく・ケーブルの太さ）の幅と高さを測ります。",
+    params: [
+      { k: "from", label: "はじめの番号", type: "range", min: 0, max: 99, step: 1, def: 1, unit: "番" },
+      { k: "to", label: "おわりの番号", type: "range", min: 1, max: 99, step: 1, def: 40, unit: "番", hint: "一度に作れるのは 60 枚まで。多い時はプレートが自動で分かれます" },
+      { k: "prefix", label: "番号の前につける文字（なくてもOK）", type: "textarea", def: "", hint: "例：「3A-」「理」。1行で" },
+      { k: "mount", label: "付け方", type: "select", def: "hole", opts: [["hole", "穴つき（結束バンド・リング）"], ["magnet", "磁石つき（裏に穴）"], ["plain", "板だけ（両面テープ）"]] },
+      { k: "W", label: "札の幅", type: "range", min: 24, max: 70, step: 1, def: 36, unit: "mm" },
+      { k: "H", label: "札の高さ", type: "range", min: 14, max: 40, step: 1, def: 20, unit: "mm" },
+      { k: "baseT", label: "札の厚さ", type: "range", min: 2, max: 4, step: 0.2, def: 2.4, unit: "mm" },
+      { k: "textT", label: "数字の盛り上がり", type: "range", min: 0.4, max: 1.6, step: 0.2, def: 0.8, unit: "mm" },
+      { k: "magD", label: "磁石の直径", type: "range", min: 6, max: 15, step: 0.5, def: 10, unit: "mm", show: "mount=magnet" },
+      { k: "magT", label: "磁石の厚さ", type: "range", min: 1, max: 3, step: 0.5, def: 2, unit: "mm", show: "mount=magnet" },
+    ],
+    colorText: true,
+    need: "{need}",
+    print: ["サポート：なし（磁石の穴は裏側＝ベッド側に開いています）", "数字の色を変える：Bambu Studio でスライス後、右のレイヤーバーを {colorZ}mm に合わせて「＋」→「フィラメント変更」", "枚数が多い時はプレートごとに保存して、1枚ずつ印刷"],
+    use: ["穴つきは結束バンドやリングで、ケーブル・かご・保管庫の取っ手に付ける", "番号の順に並べて刷られるので、はがす時に順番のまま箱に入れると配りやすい"],
+  },
+  {
+    id: "pipeclip", cat: "benri", icon: "🪝", name: "パイプクリップ（机のフック）", scene: "教室",
+    catch: "机のパイプにパチンとはめるフック。ぞうきん・袋・ケーブルの置き場に",
+    popular: { text: "パイプや机の脚にはめるクリップ式フックは、Printables・MakerWorld に作品の多い定番の実用品。パイプの太さは机ごとにちがうので、測って合わせるのが3Dプリント向きです。", url: "https://www.printables.com/search/models?q=pipe%20clip%20hook" },
+    lesson: "「パイプの太さを測る → 試験片ではめあいを確かめる → 本体を作る」は、測って決める設計の流れそのもの。技術の導入にも使えます。",
+    measure: "はめたいパイプの直径をノギスで測ります（丸パイプ用。学校の机は 22〜25mm くらいが多い）。",
+    params: [
+      { k: "dir", label: "はめるパイプの向き", type: "select", def: "h", opts: [["h", "よこのパイプ（下にフック）"], ["v", "たてのパイプ・机の脚（横にうで）"]] },
+      { k: "D", label: "パイプの直径", type: "range", min: 16, max: 34, step: 0.1, def: 25.4, unit: "mm" },
+      { k: "trial", label: "まず試験片（輪だけ）を作る", type: "check", def: false },
+      { k: "grip", label: "締めぐあい", type: "range", min: 0, max: 0.8, step: 0.1, def: 0.3, unit: "mm", hint: "輪の内側をパイプより何mm小さくするか。ゆるい→大きく、はまらない→小さく" },
+      { k: "H", label: "クリップの幅（高さ）", type: "range", min: 10, max: 30, step: 1, def: 18, unit: "mm" },
+      { k: "hookR", label: "フックの丸みの半径", type: "range", min: 6, max: 16, step: 0.5, def: 9, unit: "mm", show: "dir=h", hint: "パイプより大きくはできません（自動でおさえます）" },
+      { k: "drop", label: "パイプからフックまでの長さ", type: "range", min: 14, max: 40, step: 1, def: 18, unit: "mm", show: "dir=h" },
+      { k: "arm", label: "うでの長さ", type: "range", min: 20, max: 60, step: 1, def: 32, unit: "mm", show: "dir=v" },
+    ],
+    need: "とくになし",
+    print: ["寝かせた向きのまま、サポートなしで印刷（輪が層にそって開く向きなので割れにくい）", "「試験片」にチェックすると、輪だけを数分で刷って固さを確かめられます", "壁 3周・インフィル 20% がおすすめ"],
+    use: ["輪の口をパイプに当てて、押しこんではめる。よこのパイプ用は口が横、フックが真下に来る向きで", "かけるのは ぞうきん・袋など軽いもの（目安 500g まで）。重いかばんは かけない", "たてのパイプ用は摩擦で止まっているだけです。ずり下がる時は締めぐあいを大きくするか、机の横棒の上にのせて使う", "口を広げたまま無理にこじると割れます。白い筋・ひびが出たら使うのをやめる"],
+  },
+  {
+    id: "atom", cat: "kyozai", icon: "⚛️", name: "原子モデルマグネット", scene: "理科",
+    catch: "元素記号つきの円板を黒板に貼って、化学反応式を目の前で組みかえる",
+    popular: { text: "原子・分子モデルは理科の定番教具で、Printables・Thingiverse にも「atom model」「molecule」の作品があります。3Dプリントなら、授業で使う元素と個数だけをそろえて作れます。", url: "https://www.printables.com/search/models?q=atom%20model%20magnet" },
+    lesson: "「水素 H が4つ、酸素 O が2つ。水 H₂O はいくつできる？」と、数が合うこと（原子は増えも減りもしない）を手で動かして確かめる。班に1セットずつ配っても。",
+    measure: "黒板で見せるか、班の机で使うかから円板の直径を決めます（黒板なら 40mm 以上が見やすい）。",
+    params: [
+      { k: "list", label: "作る元素記号（空白か改行で区切る）", type: "textarea", def: "H H H H O O C", hint: "例：水の合成なら「H H H H O O」。同じ記号を書いた数だけ作ります（40個まで）" },
+      { k: "D", label: "円板の直径", type: "range", min: 20, max: 60, step: 1, def: 36, unit: "mm" },
+      { k: "small", label: "水素 H だけ小さくする", type: "check", def: true },
+      { k: "baseT", label: "円板の厚さ", type: "range", min: 2.4, max: 5, step: 0.2, def: 3, unit: "mm" },
+      { k: "textT", label: "文字の盛り上がり", type: "range", min: 0.4, max: 1.6, step: 0.2, def: 0.8, unit: "mm" },
+      { k: "magnet", label: "裏に磁石の穴をあける（黒板に貼る）", type: "check", def: true },
+      { k: "magD", label: "磁石の直径", type: "range", min: 6, max: 15, step: 0.5, def: 10, unit: "mm", show: "magnet" },
+      { k: "magT", label: "磁石の厚さ", type: "range", min: 1, max: 3, step: 0.5, def: 2, unit: "mm", show: "magnet" },
+    ],
+    colorText: true,
+    need: "{need}",
+    print: ["サポート：なし（磁石の穴は裏側＝ベッド側に開いています）", "文字の色を変えるなら {colorZ}mm でフィラメント変更", "元素ごとに円板の色を変えたい時は、1種類ずつ入れて、フィラメントを替えて刷る（水素＝白、酸素＝赤、炭素＝黒 が教科書でよく使われる色分け）"],
+    use: ["裏の穴に接着剤を1滴、磁石を入れる", "円板どうしをくっつけて分子に見立てる。反応の前と後で、同じ円板を並べかえる", "円板の大きさは本物の原子の大きさの比ではありません（見やすさのための大きさ）"],
+  },
+  {
+    id: "vernier", cat: "kyozai", icon: "📐", name: "大きなノギス模型（副尺の読み方）", scene: "技術・理科",
+    catch: "目盛りを拡大したノギスの模型。本尺と副尺を自分で動かして、0.1 までの読み方を練習できる",
+    popular: { text: "ノギスの副尺の読み方は、拡大模型で見せると伝わりやすい定番の指導法です。Printables・Thingiverse にも「vernier caliper model」の作品があります。", url: "https://www.printables.com/search/models?q=vernier%20caliper%20model" },
+    lesson: "「副尺の目盛りと本尺の目盛りが、ぴったり重なる所を読む」を、全員の手元で確かめる。先生が黒板で値を言い、班で同じ値に合わせる練習にも。",
+    measure: "1目盛りを何mmに拡大するか（大きいほど読みやすく、測れる範囲は短くなる）を決めます。",
+    params: [
+      { k: "u", label: "1目盛りの大きさ（拡大率）", type: "range", min: 3, max: 5, step: 0.5, def: 4, unit: "mm", hint: "4 なら本物の4倍。副尺の1目盛りのずれが 0.4mm になり、目で追えます" },
+      { k: "L", label: "本尺の長さ", type: "range", min: 110, max: 158, step: 1, def: 150, unit: "mm" },
+      { k: "clear", label: "すべりのすき間", type: "range", min: 0.2, max: 0.5, step: 0.05, def: 0.3, unit: "mm", hint: "固くて動かない→大きく、ガタつく→小さく" },
+    ],
+    colorText: true,
+    need: "とくになし（目盛りの色を変えるなら2色目のフィラメント）",
+    print: ["プレート1＝本尺、プレート2＝スライダー（副尺）。それぞれ「STLを保存」して別々に印刷（どちらもサポートなし）", "目盛りの色を変える：本尺は {colorZ}mm、スライダーは {colorZ2}mm でフィラメント変更", "目盛りの線がくっきり出るよう、0.2mm（Standard）か 0.12mm（Fine）で"],
+    use: ["本尺を、スライダーの右はしからみぞに差しこむ（下が広い あり形なので、上には抜けません）", "スライダーを左いっぱいに寄せると、本尺の 0 と副尺の 0 がそろいます", "読み方：①副尺の 0 が本尺のどこを過ぎたか（整数）②副尺の目盛りが本尺の目盛りとぴったり重なる所（小数第1位）", "学習用の模型です。実際の長さを測る道具ではありません（1目盛り＝{u}mm）。本物のノギスは 0.05mm まで読めるものが多いので、原理をつかんでから実物へ"],
+  },
+  {
+    id: "cubecut", cat: "kyozai", icon: "🧊", name: "立方体の切断模型", scene: "数学",
+    catch: "立方体を1つの平面で切った2つのかたまり。切り口の形を、予想してから手に取って確かめる",
+    popular: { text: "立方体の切断は中学数学（空間図形）でつまずきやすい単元で、切断模型は定番の教具です。Printables・Thingiverse にも「cube cross section」の作品があります。", url: "https://www.printables.com/search/models?q=cube%20cross%20section" },
+    lesson: "2つを合わせた立方体を見せて「この3点を通る平面で切ると、切り口は何角形？」と予想させてから開く。切り口をスタンプ台に押して紙に写すと、形と辺の長さを確かめられます。",
+    measure: "子どもの手に乗る大きさ、黒板の前で見せる大きさから、1辺を決めます。",
+    params: [
+      { k: "cut", label: "切り口の形", type: "select", def: "hex", opts: [["tri", "正三角形（3つの頂点を通る）"], ["rect", "長方形（向かい合う2辺を通る）"], ["rhomb", "ひし形（2つの頂点と2辺の中点）"], ["hex", "正六角形（6辺の中点を通る）"], ["all", "4種類ぜんぶ"]] },
+      { k: "s", label: "立方体の1辺", type: "range", min: 25, max: 60, step: 1, def: 40, unit: "mm" },
+    ],
+    need: "とくになし（2つを色ちがいで刷ると、切り口が分かりやすい）",
+    print: ["サポートなし。どのかたまりも、サポートがいらない向き（いちばん広い面が下）に自動で置いてあります", "中は空どうでOK（インフィル 10〜15%）。2つを別の色にするなら、Bambu Studio で「オブジェクトに分割」して1つずつ刷る"],
+    use: ["2つを合わせると立方体にもどります（磁石やピンは付けていません。手で合わせます）", "切り口の辺の長さを測って、三平方の定理で求めた値と比べる発展にも", "角がするどいので、配る前に指でなでてバリを確かめる"],
+  },
+  {
+    id: "tangram", cat: "kyozai", icon: "🔷", name: "タングラム（ケースつき）", scene: "算数・学級",
+    catch: "正方形を7つに切った形合わせパズル。平らで失敗しにくく、最初の1点にも向く",
+    popular: { text: "タングラムは図形感覚を育てる定番の教具で、3Dプリントでも作品数の多い人気ジャンルです。", url: "https://www.printables.com/search/models?q=tangram" },
+    lesson: "「7つ全部を使って三角形・長方形・平行四辺形を作る」「同じ面積なのに形がちがう」など、面積と合同・相似の導入に。",
+    measure: "机の上で使う大きさ、子どもの指でつまめる厚さを決めます。",
+    params: [
+      { k: "S", label: "正方形の1辺", type: "range", min: 60, max: 150, step: 1, def: 100, unit: "mm" },
+      { k: "T", label: "ピースの厚さ", type: "range", min: 3, max: 8, step: 0.5, def: 4, unit: "mm" },
+      { k: "tray", label: "ケースをつける", type: "check", def: true },
+    ],
+    need: "とくになし",
+    print: ["サポートなし。ピースは正方形に組んだ形のまま 0.5mm すき間で並んでいます", "ピースごとに色を変えるなら、Bambu Studio で右クリック→「分割」→「オブジェクトに分割」してから色を割り当て", "大きい時はピースとケースが別のプレートに分かれます"],
+    use: ["ケースの底の穴から指で押すと、ピースを取り出せます", "まずは「ケースにしまう」を目標に。慣れたら見本の形に挑戦", "ピースの角が鋭いので、配る前に指でなでてバリを確かめる"],
+  },
+  {
+    id: "note", cat: "kyozai", icon: "🎵", name: "音符マグネット", scene: "音楽・吹奏楽",
+    catch: "黒板の五線に貼る音符。音の高さを動かして見せたり、リズムを並べかえたり",
+    popular: { text: "五線黒板に貼る音符マグネットは、音楽の授業で昔から使われている教具です。3Dプリントなら、教室の五線の線の間隔に合わせた大きさで作れます。", url: "https://www.printables.com/search/models?q=music%20note%20magnet" },
+    lesson: "音符を1つ上の線に動かして「何の音になった？」、4分音符2つを2分音符1つに置きかえて「長さは同じ」など、動かせるからできる問いに。パート練習の指示にも。",
+    measure: "黒板の五線の、線と線の間隔（線の中心から次の線の中心まで）を定規で測ります。",
+    params: [
+      { k: "kind", label: "音符の種類", type: "select", def: "set", opts: [["set", "4種類セット（全・2分・4分・8分）"], ["whole", "全音符"], ["half", "2分音符"], ["quarter", "4分音符"], ["eighth", "8分音符"]] },
+      { k: "count", label: "作る数（セット数）", type: "range", min: 1, max: 8, step: 1, def: 1, unit: "" },
+      { k: "sp", label: "五線の線の間隔", type: "range", min: 14, max: 40, step: 0.5, def: 25, unit: "mm", hint: "音符の たま の高さが、この間隔になります" },
+      { k: "T", label: "厚さ", type: "range", min: 2.4, max: 5, step: 0.2, def: 3, unit: "mm" },
+      { k: "magnet", label: "裏に磁石の穴をあける", type: "check", def: true },
+      { k: "magD", label: "磁石の直径", type: "range", min: 5, max: 12, step: 0.5, def: 6, unit: "mm", show: "magnet" },
+      { k: "magT", label: "磁石の厚さ", type: "range", min: 1, max: 3, step: 0.5, def: 2, unit: "mm", show: "magnet" },
+    ],
+    need: "{need}",
+    print: ["サポート：なし（磁石の穴は裏側＝ベッド側に開いています）。黒いフィラメントで刷ると黒板でも五線の上でも見やすい", "棒（符幹）が細長いので、はがす時は たま の方から少しずつ。ベッドが冷めてからはがすと折れにくい"],
+    use: ["裏の穴に接着剤を1滴、磁石を入れる。白ぬきの音符（全音符・2分音符）は たま の両はしに1個ずつ", "棒は上向きの形です。下向きにしたい時は、上下さかさまに貼れば そのまま使えます（8分音符のはたは逆向きになります）", "棒を持って引っぱると折れます。たま を持ってはがす"],
+  },
+  {
+    id: "token", cat: "ud", icon: "⭐", name: "トークンボード（がんばりボード）", scene: "特別支援・学級",
+    catch: "「できたら1つ置く」。あといくつで ごほうび・休けい かが、目で見て分かる",
+    popular: { text: "トークンボード（トークンエコノミー）は、特別支援教育や家庭で広く使われている見通しの道具です。Printables・MakerWorld にも「token board」の作品があります。", url: "https://www.printables.com/search/models?q=token%20board" },
+    lesson: "マスの数（あといくつ）を本人と決めるところから。コマは平らで、くぼみに はまる感触があるので、置いた実感が残ります。",
+    measure: "その子が一度に見通せる数（3〜5から）と、指でつまみやすいコマの大きさを決めます。",
+    params: [
+      { k: "n", label: "マスの数", type: "range", min: 3, max: 10, step: 1, def: 5, unit: "個", hint: "6個以上は2段になります" },
+      { k: "D", label: "コマの直径", type: "range", min: 18, max: 32, step: 1, def: 24, unit: "mm" },
+      { k: "mark", label: "コマのもよう", type: "select", def: "star", opts: [["star", "星"], ["heart", "ハート"], ["maru", "二重丸"]] },
+    ],
+    colorText: true,
+    need: "とくになし（もようの色を変えるなら2色目のフィラメント）",
+    print: ["プレート1＝ボード、プレート2＝コマ。それぞれ「STLを保存」して別々に印刷（どちらもサポートなし）", "もようの色を変えるのはコマだけ：{colorZ}mm でフィラメント変更"],
+    use: ["できたらコマを1つ、左から順にくぼみへ置く。全部うまったら約束の ごほうび・休けい", "何をしたら1つか・全部でどうなるかは、始める前に本人と決めておく。取り上げる（減らす）使い方はしない", "コマは小さく飲みこめる大きさです。使う前後に数を数え、口に入れる行動がある子には大人がそばにいる時だけ使う", "合うかどうかは本人と様子を見ながら。担任・支援の先生と相談して使います"],
+  },
+  {
+    id: "tactruler", cat: "ud", icon: "📏", name: "触って読める定規", scene: "特別支援・算数",
+    catch: "目盛りが盛り上がっていて、指でさわって数えられる。左はしが 0",
+    popular: { text: "目盛りを凸にした触読用の定規は、視覚に障害のある人の学習用具として市販されています。3Dプリントでも「tactile ruler」の作品があります。", url: "https://www.printables.com/search/models?q=tactile%20ruler" },
+    lesson: "見えにくい子だけでなく、「1cm が何個分」を指で数える低学年の長さの学習にも。目をとじて長さを当てる活動で、全員が同じ道具を使えます。",
+    measure: "筆箱に入る長さ（15cm が定番）を決めます。",
+    params: [
+      { k: "L", label: "定規の長さ", type: "range", min: 80, max: 170, step: 10, def: 150, unit: "mm" },
+      { k: "half", label: "5mm ごとの短い目盛りをつける", type: "check", def: true },
+      { k: "nums", label: "数字（1・2・3…）をつける", type: "check", def: true },
+    ],
+    colorText: true,
+    need: "とくになし（目盛りの色を変えるなら2色目のフィラメント）",
+    print: ["平らな板なので、サポートなし・0.2mm Standard でOK", "目盛りの色を変えるなら {colorZ}mm でフィラメント変更（地と目盛りの明るさの差を大きくすると、見えにくい子にも読みやすい）"],
+    use: ["左のはしが 0。長い山が 1cm ごと、短い山が 5mm ごと、点1つが 5cm と 15cm、点2つが 10cm", "測るものの はしと定規の左はしを指でそろえ、山を左から数える", "刷った定規は、本物の定規に当てて長さを確かめてから使う（プリンタにより全長で 0.2〜0.5mm ほどずれることがあります。検定品の代わりにはなりません）"],
+  },
+  {
+    id: "linkage", cat: "mech", icon: "🦵", name: "リンク機構（てこクランク）", scene: "技術",
+    catch: "4本の棒をピンでつないだ機構。棒の長さを変えると、回る・ゆれるが変わるのを手で確かめられる",
+    popular: { text: "4節リンク（four-bar linkage）は機構学習の基本で、Printables・Thingiverse にも学習用の作品があります。技術科の「運動を伝える・変えるしくみ」で扱う てこクランク機構を、長さを自分で決めて作れます。", url: "https://www.printables.com/search/models?q=four%20bar%20linkage" },
+    lesson: "クランクを回すと てこ がゆれる（回転 → 揺動）。ワイパーや足ぶみミシンと同じしくみです。「いちばん短い棒＋いちばん長い棒 ≦ 残り2本の和」の時だけクランクが1回転できることを、長さを変えた班どうしで比べても。",
+    measure: "4本の長さ（穴の中心から中心まで）を決めます。画面に、回るかどうかと てこ のゆれる角度が出ます。",
+    params: [
+      { k: "a", label: "クランクの長さ（点1つ）", type: "range", min: 15, max: 40, step: 1, def: 20, unit: "mm" },
+      { k: "b", label: "連接棒の長さ（点2つ）", type: "range", min: 30, max: 110, step: 1, def: 60, unit: "mm" },
+      { k: "c", label: "てこの長さ（点3つ）", type: "range", min: 20, max: 80, step: 1, def: 40, unit: "mm" },
+      { k: "d", label: "台の長さ（固定リンク）", type: "range", min: 30, max: 110, step: 1, def: 60, unit: "mm" },
+      { k: "pinFit", label: "きつい方の穴（ピンは⌀5.0）", type: "select", def: "4.9", opts: [["4.8", "⌀4.8（きつい）"], ["4.9", "⌀4.9（ふつう）"], ["5", "⌀5.0（ゆるめ）"], ["5.1", "⌀5.1（接着する時）"]], hint: "ピンが入らない時はひとつゆるく。抜ける時はひとつきつく。時計の学習模型の試験片（穴4種）で先に確かめられます" },
+    ],
+    need: "とくになし",
+    print: ["サポートなし。棒4本と軸ピン4本が1枚のプレートに並びます（ピンは頭を下にした向き）", "ピンは短い2本が台用、長い2本が連接棒用です"],
+    use: ["①台の両はしの穴の上に、クランク（点1つ）と てこ（点3つ）の根元の穴を重ね、短いピンを上から押しこむ", "②クランクと てこ の先の台座の上に連接棒（点2つ）をのせ、長いピンを上から押しこむ", "ピンは、頭と棒の間に紙1枚ぶんのすき間を残して止めると軽く回ります（押しこみすぎると固くなる）", "台を手で押さえ、クランクを回す。てこ のゆれる角度（計算では 約{swing}°）を分度器で確かめる", "小さな部品があります。口に入れる行動がある子には貸し出さない。白い筋・ひびが出たら使うのをやめる"],
   },
 ];
 /* ===== CATALOG-END ===== */
@@ -1020,13 +1200,15 @@ function makeGeom(M){
     const A = [x1, bT], Bp = [x1 + Ls * c, bT + Ls * s];
     const nx = s, ny = -c;                                 // 板の裏側へ向かう法線
     const plank = poly([[x1 - 20 * c, bT - 20 * s], Bp, [Bp[0] + pT * nx, Bp[1] + pT * ny], [x1 - 20 * c + pT * nx, bT - 20 * s + pT * ny]]);
-    const xEnd = Math.max(Bp[0] + pT * nx, x1 + Ls * 0.55 * c + 30) + 4;
+    const xStrut = Math.max(Bp[0] + pT * nx, x1 + Ls * 0.55 * c + 30) + 4;
+    // 端末の重心（長さの半分の所）が底面の後ろ端より 8mm 以上手前に来るよう、底面だけ後ろへ伸ばす（つっかい棒の傾きは変えない）
+    const xEnd = Math.max(xStrut, x1 + (tab ? 145 : 85) * c + 8);
     const P = [x1 + 0.62 * Ls * c + pT * nx * 0.5, bT + 0.62 * Ls * s + pT * ny * 0.5];
     const prof = T(U2([
       rect(0, 0, xEnd, bT),
       rrect(lipW, lipH, 1.5, lipW / 2, lipH / 2),
       plank,
-      stroke([P, [xEnd - 3, bT / 2]], 5),
+      stroke([P, [xStrut - 3, bT / 2]], 5),
     ]).intersect(rect(-1, 0, xEnd + 10, 400)));
     const width = tab ? Math.max(100, p.width) : p.width;
     let m = extY(prof, width, -width / 2);
@@ -1354,7 +1536,8 @@ function makeGeom(M){
 
   // ⑮ 時計の学習模型（文字盤・長針・短針・軸ピン。針は手で自由に回す）
   B.clock = p => {
-    const T0 = 3, hT = 2.4;
+    const mag = !!p.magnet, mr = mag ? p.magD / 2 + 0.15 : 0;
+    const T0 = mag ? Math.max(3, p.magT + 1.05) : 3, hT = 2.4;        // 磁石の穴の天井を 0.8mm 残す
     const pinL = 2 * hT + 0.6 + T0 - 0.9;
     // 軸ピン：頭を下にして刷る。文字盤の穴にきつめ、針の穴（⌀5.6）はゆるく回る
     const pin = U([cyl(2, 6), cyl(pinL + 2, 2.5, 0, 0, 0, 40), T(Manifold.cylinder(0.6, 2.5, 2.1, 40).translate([0, 0, pinL + 2]))]);
@@ -1366,9 +1549,9 @@ function makeGeom(M){
       ds.forEach((d, i) => { for (let k = 0; k <= i; k++) marks.push(cyl(0.6, 0.7, -19.5 + i * 13 - i * 1 + k * 2, 5.5, T0 - 0.01, 16)); });
       plate = U([plate, ...marks]);
       const plates = packPlates([plate, pin], 6);
-      return { plates, info: { size: platesInfo(plates), note: "試験片：上の点が1つ＝⌀4.8、2つ＝4.9、3つ＝5.0、4つ＝5.1。ピンがきつく入って抜けない穴の設定を選んでください" } };
+      return { plates, info: { size: platesInfo(plates), need: "とくになし", note: "試験片：上の点が1つ＝⌀4.8、2つ＝4.9、3つ＝5.0、4つ＝5.1。ピンがきつく入って抜けない穴の設定を選んでください" } };
     }
-    const R = p.D / 2;
+    const R = p.D / 2, notes0 = [];
     const raised = [];
     const tickR0 = p.minNums ? R - 10.5 : R - 6;
     for (let i = 0; i < 60; i++){
@@ -1390,7 +1573,11 @@ function makeGeom(M){
       const a = Math.PI / 2 - i * Math.PI / 6;
       raised.push(T(t.cs.translate([(R - 4.6) * Math.cos(a), (R - 4.6) * Math.sin(a)])));
     }
-    const face = U([sub(cyl(T0, R, 0, 0, 0, 128), cyl(T0 + 2, p.pinFit / 2, 0, 0, -1, 40)), ext(U2(raised), p.textT + 0.01, T0 - 0.01)]);
+    let disc = sub(cyl(T0, R, 0, 0, 0, 128), cyl(T0 + 2, p.pinFit / 2, 0, 0, -1, 40));
+    // 黒板に貼る磁石の穴（裏＝ベッド側に開く。ななめ4か所）
+    if (mag){ const rm = Math.max(mr + 9, R * 0.55); disc = sub(disc, U([0, 1, 2, 3].map(k => cyl(p.magT + 0.25 + 1, mr, rm * Math.cos(Math.PI / 4 + k * Math.PI / 2), rm * Math.sin(Math.PI / 4 + k * Math.PI / 2), -1))));
+      if (T0 > 3) notes0.push("磁石の上に厚みを残すため、文字盤を " + T0.toFixed(1) + "mm にしました"); }
+    const face = U([disc, ext(U2(raised), p.textT + 0.01, T0 - 0.01)]);
     // 針（根元は丸いハブ、先に向かって細く）
     const hand = (L, wRoot, wTip) => {
       const cs = U2([circle(6), poly([[-wRoot / 2, 0], [wRoot / 2, 0], [wTip / 2, L - wTip], [0, L], [-wTip / 2, L - wTip]]), rrect(wRoot * 0.9, 12, 2, 0, -6)]);
@@ -1408,9 +1595,9 @@ function makeGeom(M){
       for (const m of side){ const b = bbox(m); pl.push(mv(m, 2 * R + 5 - b.min[0], y - b.min[1], -b.min[2])); y += b.max[1] - b.min[1] + 4; }
       plates = [pl];
     } else plates = packPlates([face, ...side], 5);
-    const notes = [];
+    const notes = notes0;
     if (p.minNums && R < 55) notes.push("文字盤が小さいので、分の数字が細かくなります（直径 110mm 以上がおすすめ）");
-    return { plates, info: { colorZ: T0, size: platesInfo(plates), note: notes.join("") } };
+    return { plates, info: { colorZ: T0, size: platesInfo(plates), need: mag ? "ネオジム磁石（" + p.magD + "×" + p.magT + "mm）4個・瞬間接着剤" : "とくになし", note: notes.join("。") } };
   };
 
   // ⑯ チョークホルダー（外側は六角形で机の上を転がらない。先の4本のつめでチョークをつかむ）
@@ -1813,7 +2000,7 @@ function makeGeom(M){
   // まわしてギヤ（歯車の列）：枠の中で2〜3枚の歯車がかみ合って回る。軸は「つづみ形」で歯車が抜けない、組み立て不要のプリントインプレース
   B.geartrain = p => {
     let m = parseFloat(p.mod);
-    const h = 7, cl = 0.35, gapTop = 0.6, barT = 2.2, barW = 7;
+    const h = 7, cl = 0.35, gapTop = 1.0, barT = 2.2, barW = 7;      // gapTop：橋が少し垂れても歯車にふれない高さ
     const r0 = 2.6, r1 = 4.0;                                 // 軸の半径：まん中 r0・上下 r1（つづみ形）
     const orig = (p.count === "3" ? [p.zA, p.zB, p.zC] : [p.zA, p.zC]).map(Math.round);
     // 枠の長さ＝中心距離の和＋両はしの歯車＋ふち。プレートに入らない時は歯の大きさを小さくする（1 まで）
@@ -1861,11 +2048,15 @@ function makeGeom(M){
     }
     const parts = [frame, ...gears];
     const bb = bbox(U(parts));
+    // 橋が空中を渡る長さ（塔〜軸、軸〜軸）。40mm をこえると垂れて歯車にふれやすい
+    const spans = [ra[0] + 1.6 - r1, ra[ra.length - 1] + 1.6 - r1];
+    for (let i = 1; i < xs.length; i++) spans.push(xs[i] - xs[i - 1] - 2 * r1);
+    const span = Math.max(...spans);
     const lab = zs.length === 3 ? ["A", "B", "C"] : ["A", "C"];
     const ratio = zs[zs.length - 1] / zs[0];
     const fix = zs.some((z, i) => z !== orig[i]);
-    return { parts, info: { multiBody: true, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], zTop], ratio: +ratio.toFixed(2), xs, zs,
-      note: (bb.max[0] - bb.min[0] > 175 ? "長すぎてプレートに入りません。歯の数を少なくしてください。" : m < m0 ? "プレートに入るよう、歯の大きさを " + m + " にしました。" : "") + (fix ? "小さい歯車は軸が通るよう、歯を " + zMin + " 枚以上にしました。" : "") + "歯の数 " + lab.map((n, i) => n + "＝" + zs[i]).join("・") + "。" + lab[0] + " を " + ratio.toFixed(2) + " 回まわすと " + lab[lab.length - 1] + " が1回（" + (zs.length === 3 ? "同じ向き" : "逆向き") + "）" } };
+    return { parts, info: { multiBody: true, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], zTop], ratio: +ratio.toFixed(2), xs, zs, span: Math.round(span),
+      note: (bb.max[0] - bb.min[0] > 175 ? "長すぎてプレートに入りません。歯の数を少なくしてください。" : m < m0 ? "プレートに入るよう、歯の大きさを " + m + " にしました。" : "") + (fix ? "小さい歯車は軸が通るよう、歯を " + zMin + " 枚以上にしました。" : "") + (span > 40 ? "⚠ 上の橋が空中を約" + Math.round(span) + "mm 渡ります。垂れて歯車にふれやすいので、歯の数か歯の大きさを小さくする（40mm 以下が安心）。" : "") + "歯の数 " + lab.map((n, i) => n + "＝" + zs[i]).join("・") + "。" + lab[0] + " を " + ratio.toFixed(2) + " 回まわすと " + lab[lab.length - 1] + " が1回（" + (zs.length === 3 ? "同じ向き" : "逆向き") + "）" } };
   };
 
   // 名前いもむし（フレキシ）：頭＋1文字ずつの丸いコマが、縦軸のピンでつながって左右にくねくね曲がる。組み立て不要
@@ -1991,6 +2182,307 @@ function makeGeom(M){
     const bb = bbox(m);
     return { parts: [m], info: { colorZ: p.baseT, size: [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], p.baseT + p.textT],
       note: fallback ? "文字が離れていて1つにつながらないため、角丸の板にしました" : "" } };
+  };
+
+  // ================= r10 で追加した10種 =================
+  // 丸い頭つきの軸ピン（頭を下にして刷る）。軸は⌀5、先は少し細く。L は頭の下から面取りの手前まで
+  const headPin = (L, headR = 5, headT = 1.6) => U([cyl(headT, headR, 0, 0, 0, 40), cyl(L + headT, 2.5, 0, 0, 0, 40),
+    T(T(Manifold.cylinder(0.6, 2.5, 2.1, 40)).translate([0, 0, L + headT]))]);
+  // 2本の線分のいちばん近い距離（交わっていれば 0）
+  const segDist = (p1, p2, p3, p4) => {
+    const pd = (p, a, b) => { const vx = b[0] - a[0], vy = b[1] - a[1], l2 = vx * vx + vy * vy;
+      const t = l2 ? clamp(((p[0] - a[0]) * vx + (p[1] - a[1]) * vy) / l2, 0, 1) : 0; return Math.hypot(p[0] - a[0] - t * vx, p[1] - a[1] - t * vy); };
+    const cr = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+    if (cr(p1, p2, p3) * cr(p1, p2, p4) < 0 && cr(p3, p4, p1) * cr(p3, p4, p2) < 0) return 0;
+    return Math.min(pd(p1, p3, p4), pd(p2, p3, p4), pd(p3, p1, p2), pd(p4, p1, p2));
+  };
+
+  // リンク機構（4節リンク）：台（固定リンク）・クランク・連接棒・てこ を軸ピンでつなぐ組立式。
+  // 高さの段：台 → クランクと てこ（1段目）→ 軸ピンの頭（2段目）→ 連接棒（3段目）。連接棒は台側のピンの頭の上を通る
+  B.linkage = p => {
+    const a = p.a, b = p.b, c = p.c, d = p.d, fit = parseFloat(p.pinFit) / 2;
+    const tB = 4, tL = 3, bossH = 3.4, slack = 0.4, w = 12, hr = w / 2, loose = 2.8;
+    const bar = L => T(U2([circle(hr, 0, 0, 48), circle(hr, L, 0, 48)]).hull());
+    const dots = (L, n, z) => [...Array(n)].map((_, k) => cyl(0.6, 1, L / 2 + (k - (n - 1) / 2) * 3, 0, z - 0.01, 16));
+    const base = ext(D2(D2(T(U2([circle(9, 0, 0, 48), circle(9, d, 0, 48)]).hull()), circle(fit, 0, 0, 40)), circle(fit, d, 0, 40)), tB);
+    // クランク・てこ：根元はゆるい穴、先は きつい穴＋台座（連接棒を1段上にあげる）
+    const arm = (L, n) => {
+      let m = U([ext(D2(bar(L), circle(loose, 0, 0, 40)), tL), cyl(bossH + 0.01, hr, L, 0, tL - 0.01, 48), ...dots(L, n, tL)]);
+      return sub(m, cyl(tL + bossH + 2, fit, L, 0, -1, 40));
+    };
+    const coupler = U([ext(D2(D2(bar(b), circle(loose, 0, 0, 40)), circle(loose, b, 0, 40)), tL), ...dots(b, 2, tL)]);
+    const pinG = () => headPin(tL + slack + tB - 0.9), pinC = () => headPin(tL + slack + bossH + tL - 0.9);
+    // 動きを計算で確かめる（クランクを2°ずつ回す）
+    const O2 = [0, 0], O4 = [d, 0];
+    let minGap = 1e9, full = true, sw = 0, prevAng = null, cum = 0, lo = 0, hi = 0;
+    for (let i = 0; i <= 360; i += 2){
+      const th = i * Math.PI / 180, A = [a * Math.cos(th), a * Math.sin(th)];
+      const dx = O4[0] - A[0], dy = O4[1] - A[1], L = Math.hypot(dx, dy);
+      if (L > b + c || L < Math.abs(b - c) || L < 1e-6){ full = false; prevAng = null; continue; }
+      const x = (b * b - c * c + L * L) / (2 * L), h = Math.sqrt(Math.max(0, b * b - x * x)), ux = dx / L, uy = dy / L;
+      const Bp = [A[0] + x * ux - h * uy, A[1] + x * uy + h * ux];
+      minGap = Math.min(minGap, segDist(O2, A, O4, Bp) - w);
+      const ang = Math.atan2(Bp[1], Bp[0] - d);
+      if (prevAng !== null){ let dA = ang - prevAng; while (dA > Math.PI) dA -= 2 * Math.PI; while (dA < -Math.PI) dA += 2 * Math.PI; cum += dA; lo = Math.min(lo, cum); hi = Math.max(hi, cum); }
+      prevAng = ang;
+    }
+    sw = Math.round((hi - lo) * 180 / Math.PI);
+    const ls = [a, b, c, d].slice().sort((x, y) => x - y), grashof = ls[0] + ls[3] <= ls[1] + ls[2];
+    let kind;
+    if (!grashof) kind = "いちばん短い＋いちばん長い が 残り2本の和より大きいので、どのリンクも1回転できません（両てこ機構）";
+    else if (ls[0] === a && full) kind = "てこクランク機構：クランクが1回転し、てこは 約" + sw + "° ゆれます";
+    else if (ls[0] === d) kind = "両クランク機構：台がいちばん短いので、クランクも てこ も1回転しようとします（この模型では途中で当たります）";
+    else if (ls[0] === c) kind = "てこ の方が1回転する てこクランク機構（クランクと てこ が入れかわった形）";
+    else kind = "両てこ機構：連接棒がいちばん短く、クランクも てこ も ゆれるだけ";
+    const hit = minGap < 0.8;
+    const plates = packPlates([base, arm(a, 1), arm(c, 3), coupler, pinG(), pinG(), pinC(), pinC()], 5);
+    return { plates, info: { size: platesInfo(plates), grashof, full, swing: sw, minGap: +minGap.toFixed(1),
+      note: (hit ? "⚠ この長さでは、動かす途中でクランクと てこ が当たります。台（固定リンク）を長くするか、クランクを短くしてください。" : "") + kind + "（短＋長 " + (ls[0] + ls[3]) + " ／ 残り " + (ls[1] + ls[2]) + "）" } };
+  };
+
+  // 原子モデルマグネット：元素記号つきの円板。裏に磁石を入れて黒板で化学反応式を組む
+  B.atom = p => {
+    const list = p.bitmaps || [], syms = p.syms || [];
+    if (!list.length) return { plates: [], info: {} };
+    const mag = !!p.magnet, mr = mag ? p.magD / 2 + 0.15 : 0;
+    const baseT = mag ? Math.max(p.baseT, p.magT + 0.85) : p.baseT;
+    const notes = [];
+    let grown = false;
+    const items = list.map((bm, i) => {
+      const want = (p.small && syms[i] === "H" ? 0.72 : 1) * p.D, D = Math.max(want, mag ? 2 * mr + 5 : 0);
+      if (D > want + 0.01) grown = true;
+      let m = cyl(baseT, D / 2, 0, 0, 0, 96);
+      if (mag) m = sub(m, cyl(p.magT + 0.25 + 1, mr, 0, 0, -1));
+      const t = fitText(bm, D * 0.64, D * 0.5, 0.15);
+      if (t) m = U([m, ext(t.cs, p.textT + 0.01, baseT - 0.01)]);
+      return m;
+    });
+    if (grown) notes.push("磁石が入るよう、小さい円板を大きくしました");
+    if (baseT > p.baseT) notes.push("磁石の上に厚みを残すため、厚さを " + baseT.toFixed(1) + "mm にしました");
+    const plates = packPlates(items, 4);
+    return { plates, info: { colorZ: baseT, size: platesInfo(plates), count: items.length, magnets: mag ? items.length : 0,
+      need: mag ? "ネオジム磁石（" + p.magD + "×" + p.magT + "mm）" + items.length + "個・瞬間接着剤" : "とくになし（机の上で使う）", note: notes.join("。") } };
+  };
+
+  // 番号札：番号（1〜40 など）をまとめて作る。穴つき・磁石つき・板だけ
+  B.numtag = p => {
+    const list = p.bitmaps || [];
+    if (!list.length) return { plates: [], info: {} };
+    const hole = p.mount === "hole", mag = p.mount === "magnet", mr = mag ? p.magD / 2 + 0.15 : 0;
+    const W = Math.max(p.W, mag ? Math.ceil(2 * mr + 6) : 0), H = Math.max(p.H, mag ? Math.ceil(2 * mr + 3.5) : 0);
+    const baseT = mag ? Math.max(p.baseT, p.magT + 0.85) : p.baseT, hw = hole ? 8 : 0;
+    const notes = [];
+    if (H > p.H || W > p.W) notes.push("磁石が入るよう、大きさを " + W + "×" + H + "mm にしました");
+    if (baseT > p.baseT) notes.push("磁石の上に厚みを残すため、厚さを " + baseT.toFixed(1) + "mm にしました");
+    const items = list.map(bm => {
+      let cs = rrect(W, H, 3);
+      if (hole) cs = D2(cs, circle(2.2, -W / 2 + 5, 0, 32));
+      let m = ext(cs, baseT);
+      if (mag) m = sub(m, cyl(p.magT + 0.25 + 1, mr, 0, 0, -1));
+      const t = fitText(bm, W - hw - 5, H - 4, 0.12);
+      if (t) m = U([m, ext(T(t.cs.translate([hw / 2, 0])), p.textT + 0.01, baseT - 0.01)]);
+      return m;
+    });
+    const plates = packPlates(items, 4);
+    return { plates, info: { colorZ: baseT, size: platesInfo(plates), count: items.length,
+      need: mag ? "ネオジム磁石（" + p.magD + "×" + p.magT + "mm）" + items.length + "個・瞬間接着剤" : hole ? "結束バンド・リング・ひも など" : "両面テープ", note: notes.join("。") } };
+  };
+
+  // 大きなノギス模型：本尺（あり形の断面）と、それをくわえてすべるスライダー（副尺 1/10）。1目盛りを u mm に拡大
+  B.vernier = p => {
+    const u = p.u, Lb = p.L, Tb = 3, Wb = 22, bv = 1.6, cl = p.clear, pl = 2, n = 10, jawL = 36, x0 = 6, h = 0.6;
+    const N = Math.floor((Lb - x0 - 3) / u);
+    const sec = poly([[0, 0], [Wb, 0], [Wb - bv, Tb], [bv, Tb]]);               // [奥行き, 高さ]。下が広い あり形
+    const raised = [];
+    for (let i = 0; i <= N; i++){
+      const x = x0 + i * u, len = i % 10 === 0 ? 8 : i % 5 === 0 ? 6 : 4;
+      raised.push(rect(x - 0.4, bv + 0.4, x + 0.4, bv + 0.4 + len));
+      if (i % 10 === 0){ const t = p.labels && fitText(p.labels[i / 10], 7, 5, 0.12); if (t) raised.push(T(t.cs.translate([Math.max(x, 4.2), bv + 12.2]))); }
+    }
+    const jaw = ext(poly([[-12, Wb], [0.01, Wb], [0.01, -jawL], [-4, -jawL], [-12, -jawL + 14]]), Tb);
+    const beam = U([extX(sec, Lb, 0), jaw, ext(U2(raised), h + 0.01, Tb - 0.01)]);
+    // スライダー：底板＋下のレール（副尺）＋上のレール。本尺は右はしから差しこむ
+    const railLo = 13, railHi = 5, zs = pl + Tb, span = (n - 1) * u, Ls = x0 + span + 8;
+    const cav = off(T(sec.translate([0, pl])), cl);
+    let slider = extX(D2(rect(-railLo, 0, Wb + railHi, zs), cav), Ls, 0);
+    const yTop = bv - 1.15 * cl - 0.5, vr = [];
+    for (let j = 0; j <= n; j++){
+      const x = x0 + j * span / n, len = j % 5 === 0 ? 6 : 4;
+      vr.push(rect(x - 0.4, yTop - len, x + 0.4, yTop));
+      if (j % 5 === 0){ const t = p.vlabels && fitText(p.vlabels[j], 6, 4, 0.12); if (t) vr.push(T(t.cs.translate([Math.max(x, 3.6), yTop - 9]))); }
+    }
+    slider = U([slider, ext(poly([[0, -railLo + 0.01], [12, -railLo + 0.01], [4, -jawL], [0, -jawL]]), zs), ext(U2(vr), h + 0.01, zs - 0.01)]);
+    const plates = [[beam], [slider]];
+    return { plates, info: { colorZ: Tb, colorZ2: zs, colorPlates: [0], plateNames: ["本尺", "スライダー（副尺）"], size: platesInfo(plates), units: N, real: +(u / 10).toFixed(2),
+      note: "本尺は 0〜" + N + " 目盛り。副尺は 9 目盛りを 10 等分（0.1 まで読める）。1目盛り＝実寸 " + u + "mm（本物の " + u + " 倍）" } };
+  };
+
+  // 凸な立体を、サポートなしで刷れて いちばん広い面を下にして置く（下向きの面が垂直から45°以内になる向きを選ぶ）
+  const layFlat = m => {
+    const me = m.getMesh(), np = me.numProp, vp = me.vertProperties, tv = me.triVerts, acc = [];
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const unit = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+    for (let i = 0; i < tv.length; i += 3){
+      const P = [0, 1, 2].map(k => [vp[tv[i + k] * np], vp[tv[i + k] * np + 1], vp[tv[i + k] * np + 2]]);
+      const nn = cross([P[1][0] - P[0][0], P[1][1] - P[0][1], P[1][2] - P[0][2]], [P[2][0] - P[0][0], P[2][1] - P[0][1], P[2][2] - P[0][2]]);
+      const A = Math.hypot(nn[0], nn[1], nn[2]) / 2; if (A < 1e-9) continue;
+      const nu = unit(nn);
+      let f = acc.find(q => dot(q.n, nu) > 0.9999); if (!f) acc.push(f = { n: nu, A: 0 });
+      f.A += A;
+    }
+    acc.sort((x, y) => y.A - x.A);
+    const best = acc.find(f => acc.every(g => g === f || dot(g.n, f.n) <= 0.7072)) || acc[0];
+    const z = [-best.n[0], -best.n[1], -best.n[2]];
+    const uu = unit(cross(Math.abs(z[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0], z)), vv = cross(z, uu);
+    return T(m.transform([uu[0], vv[0], z[0], 0, uu[1], vv[1], z[1], 0, uu[2], vv[2], z[2], 0, 0, 0, 0, 1]));
+  };
+  // 立方体の切断：1つの平面で2つに切る。切り口が 正三角形・長方形・ひし形・正六角形
+  B.cubecut = p => {
+    const s = p.s, CUT = { tri: [[1, 1, 1], s], rect: [[1, 1, 0], s], rhomb: [[1, 1, -2], 0], hex: [[1, 1, 1], 1.5 * s] };
+    const NAME = { tri: "正三角形", rect: "長方形", rhomb: "ひし形", hex: "正六角形" };
+    const kinds = p.cut === "all" ? ["tri", "rect", "rhomb", "hex"] : [p.cut];
+    const items = [];
+    for (const k of kinds){
+      const [nv, cc] = CUT[k], l = Math.hypot(...nv);
+      const pcs = box(0, 0, 0, s, s, s).splitByPlane(nv.map(x => x / l), cc / l).map(T);
+      for (const pc of pcs) items.push(layFlat(pc));
+    }
+    const plates = packPlates(items, 5);
+    return { plates, info: { size: platesInfo(plates), count: items.length, shape: kinds.map(k => NAME[k]).join("・") } };
+  };
+
+  // タングラム：正方形を7つに切ったパズル（大きい三角2・中くらいの三角1・小さい三角2・正方形1・平行四辺形1）。ケースつき
+  B.tangram = p => {
+    const S = p.S, T0 = p.T, gap = 0.5;
+    const PCS = [[[0, 0], [1, 0], [.5, .5]], [[0, 0], [.5, .5], [0, 1]], [[1, .5], [1, 1], [.5, 1]], [[.5, .5], [.75, .25], [1, .5], [.75, .75]],
+      [[1, 0], [1, .5], [.75, .25]], [[.5, .5], [.75, .75], [.25, .75]], [[0, 1], [.25, .75], [.75, .75], [.5, 1]]];
+    const ch = 0.6;                                             // 下の角を少し落とす（1層目のはみ出しで組めなくなるのを防ぐ）
+    const pieces = PCS.map(pts => {
+      const cs = T(T(poly(pts.map(([x, y]) => [x * S, y * S])).offset(-gap / 2, "Miter", 2)).offset(0, "Round", 2, 8));
+      return U([ext(off(cs, -ch * 0.5), ch + 0.01), ext(cs, T0 - ch, ch)]);
+    });
+    const items = [U(pieces)];
+    if (p.tray){
+      const iw = S + 1.2, wall = 2;
+      let tray = sub(ext(rrect(iw + 2 * wall, iw + 2 * wall, 3), T0 + 1.6), ext(rrect(iw, iw, 0.6), T0 + 2, 1.6));
+      tray = sub(tray, cyl(4, 9, 0, 0, -1, 48));               // 底の穴：下から指で押してピースを出す
+      items.push(tray);
+    }
+    const plates = packPlates(items, 5);
+    return { plates, info: { size: platesInfo(plates), multiBody: true, plateNames: plates.length > 1 ? ["ピース", "ケース"] : undefined, pieces: 7 } };
+  };
+
+  // トークンボード：くぼみの並んだ板と、はめるコマ（星・ハート・二重丸）。「できたら1つ置く」見通しの道具
+  B.token = p => {
+    const n = Math.round(p.n), r = p.D / 2, pitch = p.D + 5, Tb = 3.6, dep = 1.6, tT = 3;
+    const perMax = Math.max(1, Math.floor((PLATE - 5) / pitch));
+    const rows = n > 5 || n > perMax ? Math.ceil(n / Math.min(5, perMax)) : 1, per = Math.ceil(n / rows);
+    const W = per * pitch + 5, Hh = rows * pitch + 5;
+    const holes = [];
+    for (let i = 0; i < n; i++){
+      const cx = 2.5 + pitch / 2 + (i % per) * pitch, cy = Hh - (2.5 + pitch / 2 + Math.floor(i / per) * pitch);
+      holes.push(cyl(dep + 1, r + 0.5, cx, cy, Tb - dep, 64));
+    }
+    const board = sub(ext(rrect(W, Hh, 5, W / 2, Hh / 2), Tb), U(holes));
+    let mark;
+    if (p.mark === "heart"){
+      const q = r * 0.3, tip = circle(0.3, 0, -1.75 * q, 12);
+      mark = T(U2([T(U2([circle(q, -q * 0.92, q * 0.45, 40), tip]).hull()), T(U2([circle(q, q * 0.92, q * 0.45, 40), tip]).hull())]).translate([0, q * 0.3]));
+    } else if (p.mark === "maru"){
+      mark = U2([D2(circle(r * 0.66, 0, 0, 64), circle(r * 0.48, 0, 0, 64)), circle(r * 0.26, 0, 0, 48)]);
+    } else {
+      const pts = [];
+      for (let j = 0; j < 10; j++){ const a = Math.PI / 2 + j * Math.PI / 5, rr = j % 2 ? r * 0.3 : r * 0.68; pts.push([rr * Math.cos(a), rr * Math.sin(a)]); }
+      mark = off(poly(pts), 0.2);
+    }
+    const tok = () => U([lathe([[0, 0], [r - 0.8, 0], [r, 0.8], [r, tT], [0, tT]], 0, 0, 0, 64), ext(mark, 0.8 + 0.01, tT - 0.01)]);
+    const tp = packPlates([...Array(n)].map(tok), 4);
+    const plates = [[board], ...tp];
+    return { plates, info: { colorZ: tT, colorPlates: tp.map((_, i) => i + 1), plateNames: ["ボード", ...tp.map((_, i) => "コマ" + (tp.length > 1 ? i + 1 : ""))], size: platesInfo(plates), tokens: n } };
+  };
+
+  // 触って読める定規：上のふちに 1cm ごとの長い山、5mm ごとの短い山、5cm ごとに点。左はしが 0
+  B.tactruler = p => {
+    const L = p.L, W = 30, T0 = 2.4, h = 0.8, raised = [];
+    const plate = U2([rect(0, 0, L - 4, W), rrect(10, W, 3, L - 5, W / 2)]);
+    const nCm = Math.floor((L - 2) / 10);
+    for (let i = 1; i <= nCm; i++){
+      const x = i * 10;
+      raised.push(rect(x - 0.6, W - 9, x + 0.6, W));
+      if (i % 5 === 0){ const k = i % 10 === 0 ? 2 : 1; for (let q = 0; q < k; q++) raised.push(circle(1.5, x + (q - (k - 1) / 2) * 4.2, W - 12.5, 24)); }
+      if (p.nums){ const t = p.labels && fitText(p.labels[i], 6.5, 5, 0.12); if (t) raised.push(T(t.cs.translate([x, 6.5]))); }
+    }
+    if (p.half) for (let x = 5; x <= L - 2; x += 10) raised.push(rect(x - 0.5, W - 5, x + 0.5, W));
+    const m = U([ext(plate, T0), ext(U2(raised), h + 0.01, T0 - 0.01)]);
+    return { parts: [m], info: { colorZ: T0, size: [L, W, T0 + h], cm: nCm } };
+  };
+
+  // 音符マグネット：黒板の五線に貼る音符（全音符・2分・4分・8分）。たまの高さ＝五線の線の間隔
+  B.note = p => {
+    const sp = p.sp, mag = !!p.magnet, mr = mag ? p.magD / 2 + 0.15 : 0;
+    const T0 = mag ? Math.max(p.T, p.magT + 0.85) : p.T;
+    const a = 0.66 * sp, b = 0.48 * sp, tilt = 20 * Math.PI / 180, ct = Math.cos(tilt), st = Math.sin(tilt);
+    const ell = (ra, rb) => T(T(T(CrossSection.circle(1, 72)).scale([ra, rb])).rotate(20));
+    const kinds = p.kind === "set" ? ["whole", "half", "quarter", "eighth"] : [p.kind];
+    const notes = [];
+    let nMag = 0;
+    const make = k => {
+      const hollow = k === "whole" || k === "half";
+      const sw = Math.max(2.8, sp * 0.12), xs = Math.sqrt(a * a * ct * ct + b * b * st * st) - sw / 2, yt = 3.3 * sp;
+      const shp = [ell(a, b)];
+      if (k !== "whole") shp.push(stroke([[xs, 0.1 * sp], [xs, yt]], sw));
+      if (k === "eighth") shp.push(stroke([[xs, yt], [xs + 0.5 * sp, yt - 0.8 * sp], [xs + 0.68 * sp, yt - 1.45 * sp], [xs + 0.5 * sp, yt - 2.0 * sp]], sw * 1.15),
+        poly([[xs, yt + sw / 2], [xs + 0.45 * sp, yt - 0.72 * sp], [xs, yt - 0.95 * sp]]));
+      let cs = U2(shp);
+      const pk = [];
+      if (hollow){
+        const wEnd = Math.max(0.3 * a, mag ? 2 * mr + 2.6 : 0);
+        let ah = a - wEnd, okMag = mag;
+        if (ah < 0.3 * a){ ah = 0.3 * a; okMag = false; if (mag) notes.push("白ぬきの音符は磁石が入りません（線の間隔を大きくするか、小さい磁石に）"); }
+        cs = D2(cs, ell(ah, b * 0.45));
+        if (okMag) for (const s of [-1, 1]) pk.push([s * (a - wEnd / 2) * ct, s * (a - wEnd / 2) * st]);
+      } else if (mag){
+        if (mr + 1.5 <= b) pk.push([0, 0]); else notes.push("たま が小さく磁石が入りません（線の間隔を大きくするか、小さい磁石に）");
+      }
+      let m = ext(cs, T0);
+      if (pk.length){ m = sub(m, U(pk.map(([x, y]) => cyl(p.magT + 0.25 + 1, mr, x, y, -1)))); nMag += pk.length; }
+      return m;
+    };
+    const items = [];
+    for (let r = 0; r < Math.round(p.count); r++) for (const k of kinds) items.push(make(k));
+    const plates = packPlates(items, 4);
+    return { plates, info: { size: platesInfo(plates), count: items.length, magnets: nMag,
+      need: nMag ? "ネオジム磁石（" + p.magD + "×" + p.magT + "mm）" + nMag + "個・瞬間接着剤" : "とくになし", note: [...new Set(notes)].join("。") + (T0 > p.T ? (notes.length ? "。" : "") + "磁石の上に厚みを残すため、厚さを " + T0.toFixed(1) + "mm にしました" : "") } };
+  };
+
+  // パイプクリップ：机のパイプにパチンとはめるＣ形の輪。よこのパイプ用（下にフック）と、たてのパイプ用（横にうで）
+  B.pipeclip = p => {
+    const Ri = (p.D - p.grip) / 2, t = p.D < 26 ? 2.4 : 2.8, Ro = Ri + t, Rm = Ri + t / 2, phi = 55 * Math.PI / 180;
+    const Hc = p.trial ? 6 : p.H;
+    // 口は −X 側（中心から ±55°）。口の先は丸くふくらませて、パイプをすべりこませやすく
+    const wedge = poly([[0, 0], [3 * Ro * Math.cos(Math.PI - phi), 3 * Ro * Math.sin(Math.PI - phi)], [-4 * Ro, 0], [3 * Ro * Math.cos(Math.PI + phi), 3 * Ro * Math.sin(Math.PI + phi)]]);
+    const lips = [1, -1].map(s => circle(t / 2 + 0.5, (Rm + 0.3) * Math.cos(Math.PI - s * phi), (Rm + 0.3) * Math.sin(Math.PI - s * phi), 32));
+    const shp = [D2(circle(Ro, 0, 0, 96), wedge), ...lips];
+    let m, size;
+    if (p.trial || p.dir === "v"){
+      m = ext(D2(U2(shp), circle(Ri, 0, 0, 96)), Hc);
+      if (!p.trial){
+        const La = p.arm, aw = 12, at = 5, tip = 10;
+        const armCS = T(U2([rect(Ro - 1, -aw / 2, Ro + La - aw / 2, aw / 2), circle(aw / 2, Ro + La - aw / 2, 0, 40)]).subtract(circle(Ri + 0.01, 0, 0, 96)));
+        m = U([m, ext(armCS, at), cyl(at + tip, 3.2, Ro + La - aw / 2, 0, 0, 40), T(T(Manifold.sphere(3.2, 32)).translate([Ro + La - aw / 2, 0, at + tip]))]);
+      }
+    } else {
+      const rh = Math.min(p.hookR, Ro - 2), sw = t + 0.8, yc = -Ro - p.drop, path = [[rh, 0], [rh, yc]];
+      for (let i = 1; i <= 24; i++){ const an = -Math.PI * i / 24; path.push([rh * Math.cos(an), yc + rh * Math.sin(an)]); }
+      path.push([-rh, yc + 5]);
+      shp.push(stroke(path, sw));
+      m = ext(D2(U2(shp), circle(Ri, 0, 0, 96)), Hc);
+    }
+    const bb = bbox(m);
+    size = [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], bb.max[2]];
+    return { parts: [m], info: { size, wall: t, inner: +(2 * Ri).toFixed(1),
+      note: p.trial ? "試験片です（輪だけ・高さ6mm）。パイプにはめて、固さを確かめてから本体を作ってください" : "" } };
   };
 
   function build(kind, p){
@@ -2227,6 +2719,13 @@ function params(){
     p.labels = {}; p.mlabels = {};
     for (let i = 1; i <= 12; i++){ p.labels[i] = rasterText(String(i)); p.mlabels[i] = rasterText(String(i * 5)); }
   }
+  if (g.id === "atom"){ p.syms = String(p.list || "").split(/[\s,、，]+/).filter(Boolean).slice(0, 40); p.bitmaps = p.syms.map(s => rasterText(s)).filter(Boolean); }
+  if (g.id === "numtag"){
+    const a = Math.round(p.from), b = Math.max(a, Math.round(p.to)), pre = String(p.prefix || "").split(/\r?\n/)[0].trim().slice(0, 6);
+    p.bitmaps = []; for (let i = a; i <= b && p.bitmaps.length < 60; i++) p.bitmaps.push(rasterText(pre + i));
+  }
+  if (g.id === "vernier"){ p.labels = {}; for (let i = 0; i <= 6; i++) p.labels[i] = rasterText(String(i)); p.vlabels = { 0: rasterText("0"), 5: rasterText("5"), 10: rasterText("10") }; }
+  if (g.id === "tactruler"){ p.labels = {}; for (let i = 1; i <= 17; i++) p.labels[i] = rasterText(String(i)); }
   return p;
 }
 function toMesh(m){
@@ -2241,7 +2740,7 @@ function rebuild(){
   let res;
   try { res = G.build(g.id, params()); }
   catch (e){ console.error(e); G.free(); showError("この組み合わせでは形が作れませんでした。値を少し変えてください"); return; }
-  if (!res.plates.length){ G.free(); showError(g.id === "namemag" ? "名前を1行に1人ずつ入れてください" : "数を1つ以上にしてください"); return; }
+  if (!res.plates.length){ G.free(); showError(g.id === "namemag" ? "名前を1行に1人ずつ入れてください" : g.id === "atom" ? "元素記号を入れてください（例：H H O）" : "数を1つ以上にしてください"); return; }
   const plates = res.plates.map(parts => {
     const all = G.unionAll(parts), pr = all.getProperties(), bb = all.boundingBox();
     all.delete();
